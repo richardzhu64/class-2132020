@@ -1,0 +1,33 @@
+---
+title: "class-2132020"
+author: "Richard Zhu"
+date: "2/13/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+library(janitor)
+library(gt)
+```
+
+```{r}
+enrollment <- read_excel("class_enrollment_summary_by_term_2.13.20.xlsx", skip=3) %>%
+  clean_names() %>%
+  filter(u_grad < 20000)
+
+enrollment_gov <- enrollment %>%
+    filter(course_department == "Government") %>%
+    arrange(desc(total)) %>%
+    slice(1:5) %>%
+    select(course_title, course_name, instructor_full_name, total)
+pretty_chart <- enrollment_gov %>% 
+  gt() %>%
+  tab_header(
+    title = "Top 5 Government Classes by Enrollment",
+    subtitle = glue::glue("Sponsored by Mike Burke")
+  ) %>%
+  tab_footnote("FAS times")
+```
